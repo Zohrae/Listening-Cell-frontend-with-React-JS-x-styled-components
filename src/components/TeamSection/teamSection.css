@@ -1,0 +1,133 @@
+:root {
+
+  --primary-color: #b2744c; 
+
+  --secondary-color: #4c8ab2; 
+  
+  /* Shades for secondary color */
+  --shade1: #598dbf;
+  --shade2: #669ecb;
+  --shade3: #73aff8;
+  --shade4: #80c0ff;
+  --shade5: #8dd0ff;
+  --shade6: #9ae0ff;
+  --shade7: #a7f0ff;
+  --shade8: #b4f9ff;
+  --shade9: #c1ffff;
+  --shade10: #e9f4f4;
+
+  /* Shades for primary color */
+  --pshade1: #b97f63;
+  --pshade12: #98705a;
+  --pshade13: #b98f74;
+
+
+  --pshade2: #c28b71;
+  --pshade3: #cc967f;
+  --pshade4: #d6a08d;
+  --pshade5: #e1ab9b;
+  --pshade6: #ebb6a9;
+  --pshade7: #f5c1b7;
+  --pshade8: #ffccc6;
+  --pshade9: #ffd6d4;
+  --pshade10: #ffe1e2;
+  --pshade11: #f8f8f8;
+  --pshade14: rgb(246, 242, 242);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: arial;
+  }
+
+  .bodi{
+    background-color: var(--pshade11);
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  .main2{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
+  
+  .profile-card{
+    position: relative;
+    width: 310px;
+    height: 310px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 50%;
+    box-shadow: 0 0 22px var(--pshade13);
+    transition: .6s;
+    margin: 0 25px;
+   
+  }
+  .profile-card:hover{
+    border-radius: 10px;
+    height: 260px;
+  }
+  .profile-card .img{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: .6s;
+    z-index: 99;
+    cursor: pointer;
+  }
+  .img img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 0 22px #3336;
+    transition: .6s;
+  }
+  .profile-card:hover .img{
+    transform: translateY(-90px);
+  }
+  .profile-card:hover img{
+    border-radius: 10px;
+  }
+  .caption{
+    text-align: center;
+    transform: translateY(-80px);
+    opacity: 0;
+    transition: .6s;
+  }
+  .profile-card:hover .caption{
+    opacity: 1;
+  }
+  .caption h3{
+    font-size: 25px;
+   
+  }
+  .caption p{
+    font-size: 17px;
+    color: var(--secondary-color);
+    font-weight: bold;
+  }
+  .social-links a{
+    color: #333;
+    font-size: 21px;
+    transition: .6s;
+     
+  }
+  i{
+    margin-top: 10px;
+    padding: 5px;
+  }
+  .social-links a:hover{
+    color: #0c52a1;
+  }

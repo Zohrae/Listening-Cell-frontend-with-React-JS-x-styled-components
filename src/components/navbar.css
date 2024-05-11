@@ -1,0 +1,89 @@
+:root {
+
+    --primary-color: #b2744c; 
+
+    --secondary-color: #4c8ab2; 
+    
+    /* Shades for secondary color */
+    --shade1: #598dbf;
+    --shade2: #669ecb;
+    --shade3: #73aff8;
+    --shade4: #80c0ff;
+    --shade5: #8dd0ff;
+    --shade6: #9ae0ff;
+    --shade7: #a7f0ff;
+    --shade8: #b4f9ff;
+    --shade9: #c1ffff;
+    --shade10: #e9f4f4;
+
+    /* Shades for primary color */
+    --pshade1: #b97f63;
+    --pshade2: #c28b71;
+    --pshade3: #cc967f;
+    --pshade4: #d6a08d;
+    --pshade5: #e1ab9b;
+    --pshade6: #ebb6a9;
+    --pshade7: #f5c1b7;
+    --pshade8: #ffccc6;
+    --pshade9: #ffd6d4;
+    --pshade10: #ffe1e2;
+}
+
+
+.navbar-nav .nav-link {
+    border-radius: 10px;
+    padding: 10px 20px; /* Adjust padding */
+    position: relative;
+
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: var(--shade10); 
+    animation: navbarAnimation 0.5s ease-in-out; /* Animation on hover */
+}
+
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* Position the line above the element */
+    left: 0; /* Align the line with the left side of the element */
+    right: 20px;
+    width: 100%; /* Extend the line horizontally */
+    height: 2px; /* Set the height of the line */
+    background-color: var(--shade1); /* Yellow color */
+    z-index: -1; /* Move the line below the link */
+    visibility: hidden; /* Hide the line by default */
+    transition: visibility 0s, opacity 0.5s linear;
+    opacity: 0;
+}
+
+
+.navbar-nav .nav-link:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+@keyframes navbarAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.navbar {
+    justify-content: flex-start; /* Align items to the left */
+    padding-left: 20px; /* Add left padding for margin */
+    padding-right: 0; /* Remove right padding */
+}
+
+.navbar-nav {
+    margin-left: auto; /* Push navbar-nav to the right */
+}
