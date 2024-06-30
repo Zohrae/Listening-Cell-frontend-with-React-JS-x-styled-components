@@ -1,9 +1,7 @@
 :root {
-
     --primary-color: #b2744c; 
-
     --secondary-color: #4c8ab2; 
-    
+
     /* Shades for secondary color */
     --shade1: #598dbf;
     --shade2: #669ecb;
@@ -15,175 +13,262 @@
     --shade8: #b4f9ff;
     --shade9: #c1ffff;
     --shade10: #e9f4f4;
+    --shade11: #f5f9f9;
+    --shade19: #c9def1;
+    --shade109: #d5e8e8;
+    --shade111: #fdfefe;
 
     /* Shades for primary color */
     --pshade1: #b97f63;
-    --pshade12: #98705a;
-
     --pshade2: #c28b71;
     --pshade3: #cc967f;
     --pshade4: #d6a08d;
     --pshade5: #e1ab9b;
     --pshade6: #ebb6a9;
-    --pshade7: #f5c1b7;
+    --pshade7: #f5c5a5;
     --pshade8: #ffccc6;
     --pshade9: #ffd6d4;
     --pshade10: #ffe1e2;
     --pshade11: #f8f8f8;
-    --pshade14: rgb(246, 242, 242);
+    --pshade12: #98705a;
+    --pshade14: #f6f2f2;
+    --pshade1ee: #fbefe9;
+    --pshade17:rgb(249, 238, 235)3;
+    --pshade62: rgb(251, 247, 243);
+    --pshade1e: #f9f7f7;
+    --pshade102: rgb(245, 218, 203);
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+#about {
+    font-family: sans-serif;
+    /* width: 100%; */
+    width: 100vw; 
+    margin-left: calc(-50vw + 50%); 
+}
+
+#about-section {
+    text-align: center; 
+}
+
+h1 {
+    text-align: center;
+    margin: 50px auto -20px; 
+    color: black;
+}
+
+.main {
+    width: 370px; /* Ensure full width for responsiveness */
+    max-width: 370px;
+    min-height: 560px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    margin: -100px auto; /* Remove bottom margin */
+}
+
+h2 {
+    font-family: Gabriola;
+    /* margin: -60px;  */
 
 
 }
 
+.service {
+    background: var(--pshade11);
+    padding: 30px;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 0;
+    box-shadow: 0 0 20px -15px black;
+    transition: transform .7s;
+    margin-top: 0; /* Assurez-vous qu'il n'y a pas de marge supérieure */
 
-    *
-        {
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
+}
 
-        body
-        {
-            background: var(--pshade11);
-        }
+.service-logo {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 2px solid var(--pshade12);
+    margin: -90px auto 0;
+    background: var(--pshade11);
+}
 
-        h1
-        {
-            text-align: center;
-            margin: 50px auto 100px;
-            color: black;
-            
-        }
+.service-logo img {
+    width: 110px;
+    margin-top: 12px;   
+}
 
-        .main {
-            width: 370px;
-            min-height: 560px;
-            text-align: center;
-            position: relative;
-            cursor: pointer;
-        }
+.service h4 {
+    height: 35px;
+    width: 80%;
+    background: rgb(249, 246, 251);
+    margin: 50px auto;
+    position: relative;
+}
 
-        h2 {
-            font-family: Gabriola;
-        }
+.shadow1 {
+    height: 200px;
+    width: 80%;
+    background: var(--pshade14);
+    position: absolute;
+    border-radius: 10px;
+    bottom: 0;
+    left: 10%;
+    z-index: -1;
+    box-shadow: 0 0 20px -15px black;
+    transition: transform .7s;
+}
 
-        .service 
-        {
-            background: var(--pshade11);
-            padding: 30px;
-            border-radius: 10px;
-            position: absolute;
-            bottom: 0;
-            box-shadow: 0 0 20px -15px black;
-            transition: transform .7s;
-        }
+.shadow2 {
+    height: 200px;
+    width: 64%;
+    background: var(--pshade14);
+    position: absolute;
+    border-radius: 10px;
+    bottom: 0;
+    left: 18%;
+    z-index: -1;
+}
 
-        .service-logo
-        {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            border: 2px solid var(--pshade12);
-            margin: -90px auto 0;
-            background: var(--pshade11);
-        }
+.main:hover .service {
+    transform: translateY(-50px);
+}
 
-        .service-logo img
-        {
-          width: 110px;
-          margin-top: 12px;   
-        }
+.main:hover .shadow1 {
+    transform: translateY(-25px);
+}
 
-        .service h4
-        {
-            height: 35px;
-            width: 80%;
-            background: rgb(249, 246, 251);
-            margin: 50px auto;
-            position: relative;
-        }
+.about-button {
+    position: relative; 
+    top: 20%; 
+    transform: translateY(-50%); 
+    left: 0; 
+    background-color: var(--secondary-color); 
+    color: white; 
+    border: none; 
+    margin-top: 15px;
+    padding: 10px 50px; 
+    border-radius: 30px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+    font-size: 18px; 
+}
 
-        .service h4::after
-        {
-            content: '';
-            width: 40px;
-            height: 30px;
-            background: linear-gradient(to right, #b2744c, #598dbf);
-            position: absolute;
-            right: -5px;
-            top: -5px;
-            z-index: -1;
-            border-radius: 8px;
-        }
+.about-button:hover {
+    background-color: var(--shade2); 
+}
 
+/* Responsive Design */
+@media (max-width: 2000px) {
+    #about-section {
+        padding-top: 840px;
+        padding-bottom: 150px;
+    }
+}
 
-        .service h4::before
-        {
-            content: '';
-            width: 40px;
-            height: 30px;
-            background: linear-gradient(to right,#598dbf, #b2744c);
-            position: absolute;
-            border-radius: 8px;
-            left: -5px;
-            bottom: -5px;
-            z-index: -1;
-        }
+@media (max-width: 1800px) {
+    #about-section {
+        padding-top: 770px; 
+        padding-bottom: 100px;
+    }
+}
 
-        .shadow1 
-        {
-            height: 200px;
-            width: 80%;
-            background: var(--pshade14);
-            position: absolute;
-            border-radius: 10px;
-            bottom: 0;
-            left: 10%;
-            z-index: -1;
-            box-shadow: 0 0 20px -15px black;
-            transition: transform .7s;
-        }
+@media (max-width: 1700px) {
+    #about-section {
+        padding-top: 1030px;
+        padding-bottom: 150px;
+    }
+}
 
-        .shadow2 
-        {
-            height: 200px;
-            width: 64%;
-            background: var(--pshade14);
-            position: absolute;
-            border-radius: 10px;
-            bottom: 0;
-            left: 18%;
-            z-index: -1;
-        }
+@media (max-width: 1600px) {
+    #about-section {
+        padding-top: 980px; 
+        padding-bottom: 150px;
+    }
+}
 
-        .main:hover .service
-        {
-            transform: translateY(-50px);
-        }
+@media (max-width: 1500px) {
+    #about-section {
+        padding-top: 630px;
+        padding-bottom: 150px;
+    }
+}
 
-        .main:hover .shadow1
-        {
-            transform: translateY(-25px);
-        }
-        
-        
-        .about-button {
-            position: relative; 
-            top: 20%; 
-            transform: translateY(-50%); 
-            left: 0; 
-            background-color:var(--secondary-color); 
-            color: white; 
-            border: none; 
-            margin-top: 15px;
-            padding: 10px 50px; 
-            border-radius: 30px; 
-            cursor: pointer;
-            transition: background-color 0.3s ease; 
-            font-size: 18px; 
-        }
-        
-        .about-button:hover {
-            background-color: var(--shade2); 
-        }
+@media (max-width: 1400px) {
+    #about-section {
+        padding-top: 970px; 
+        padding-bottom: 150px;
+    }
+}
+
+@media (max-width: 1300px) {
+    #about-section {
+        padding-top: 970px; 
+        padding-bottom: 150px;
+    }
+}
+
+@media (max-width: 1212px) {
+    #about-section {
+        padding-top: 970px; 
+        padding-bottom: 150px;
+    }
+}
+
+@media (max-width: 992px) {
+    #about-section {
+        padding-top: 950px;
+        padding-bottom: 150px;
+    }
+}
+
+@media (max-width: 800px) {
+    #about-section {
+        padding-top: 970px; 
+        padding-bottom: 150px;
+    }
+}
+
+@media (max-width: 600px) {
+    .main {
+        max-width: 100%; /* Make .main element fully responsive */
+        padding: 0 10px; /* Add some padding on smaller screens */
+        margin-left: 0; /* Remove the left margin adjustment for smaller screens */
+    }
+}
+
+@media (max-width: 400px) {
+    .service-logo {
+        width: 100px; /* Adjust size for very small screens */
+        height: 100px;
+    }
+
+    .service-logo img {
+        width: 80px;
+    }
+
+    .service h4 {
+        width: 100%; /* Ensure heading takes full width */
+    }
+}
+
+@media (max-width: 912px) and (min-height: 1368px) {
+    #about-section {
+        padding-top: 1400px;
+        padding-bottom: 0;
+    }
+}

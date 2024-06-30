@@ -30,6 +30,10 @@
 }
 
 
+#navbar-section {
+    font-family: sans-serif;
+}
+
 .navbar-nav .nav-link {
     border-radius: 10px;
     padding: 10px 20px; /* Adjust padding */

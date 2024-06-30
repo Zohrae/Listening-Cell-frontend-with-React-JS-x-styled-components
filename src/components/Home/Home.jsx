@@ -1,4 +1,7 @@
 import React, { useEffect } from 'react';
+import Navbar from '../Navbar';
+import AboutUs from '../About/About';
+import './home.css'
 
 const Home = () => {
     useEffect(() => {
@@ -36,10 +39,20 @@ const Home = () => {
         }
 
         setTimeout(type, 1000);
+        document.body.id = 'home-body';
+        document.body.className = 'home-body';
+
+        // Clean up function to remove ID and class when the component unmounts
+        return () => {
+            document.body.id = '';
+            document.body.className = '';
+        };
     }, []);
 
     return (
-        <div className="home">
+        <div id="home" className="home">
+            <Navbar />
+
             <div className="overlay"></div>
             <img 
                 src="/img/bg.png" 
@@ -49,14 +62,22 @@ const Home = () => {
             <div className="text-container">
                 <h1 className="welcome-text">Welcome</h1>
                 <p id="quote" className="animated-quote"></p>
-                <p className="static-quote">"Have a beautiful day ahead!"</p>
-                <p className="paragraph">In the journey of life, challenges may arise, 
-               <br /> but within each challenge lies an opportunity for growth. 
-              <br /> Believe in your ability to overcome any obstacle that comes your way.</p>
-                <button className="more-button">More</button>
+                <p className="static-quote">"Passez une belle journée !"</p>
+                <p className="paragraph">Dans le voyage de la vie, des défis peuvent surgir,
+                <br /> mais dans chaque défi se trouve une opportunité de croissance.
+                <br /> Croyez en votre capacité à surmonter tout obstacle qui se présente à vous.</p>
+                <button className="more-button">Plus</button>
             </div>
+
+            <div id="about-section">
+                <AboutUs /> 
+            </div>
+            
         </div>
+
     );
+    
 };
+
 
 export default Home;

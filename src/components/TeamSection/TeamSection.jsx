@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
+import './teamSection.css';
 
 const TeamSection = () => {
   const [advisors, setAdvisors] = useState([]);
-  
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     fetch('http://localhost:8000/api/conseillers/')
@@ -20,39 +20,65 @@ const TeamSection = () => {
       .catch(error => console.error('Error fetching advisors:', error));
   }, []);
 
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? advisors.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => 
+      (prevIndex + 1) % advisors.length
+    );
+  };
+
+  const getAdvisorsToDisplay = () => {
+    if (advisors.length <= 3) {
+      return advisors;
+    }
+
+    const startIndex = currentIndex % advisors.length;
+    return [
+      advisors[startIndex],
+      advisors[(startIndex + 1) % advisors.length],
+      advisors[(startIndex + 2) % advisors.length],
+    ];
+  };
+
   return (
-    <html>
-      <head>
-        <title> Our Team Section Design</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet" />
-      </head>
-      <body className='bodi'>
-      <div className="team-section-container">
-        <div className="main2">
-          {advisors.map(advisor => (
-            <div className="profile-card" key={advisor.idUtilisateur}>
-              <div className="img">
-                <img src="img/sidna.jpg" alt="Profile 1" />
-              </div>
-              <div className="caption">
-              <h3>{advisor.Prenom} {advisor.Nom}</h3>
-            <p>{advisor.department}</p>
-                <div className="social-links">
-                <a href={`mailto:${advisor.Gmail}`}><i className="fab fa-facebook"></i></a>
-                <a href={`https://www.instagram.com/${advisor.Instagram}`}><i className="fab fa-instagram"></i></a>
-                <a href={`https://www.linkedin.com/in/${advisor.Linkedin}`}><i className="fab fa-linkedin"></i></a>
-
-
-                </div>
-              </div>
+    <div id='team' className="container">
+        <div className="header-container">
+          <h2 className="header">Notre Équipe de Conseillers</h2>
+          <div className="bubbles">
+            <div className="bubble"></div>
+            <div className="bubble"></div>
+            <div className="bubble"></div>
+          </div>
+        </div>
+        <p className="description">
+          Rencontrez notre équipe de conseillers dévoués,
+          prêts à vous aider avec leur expertise et leur expérience.
+        </p>
+      <div className="sub-container">
+        {getAdvisorsToDisplay().map(advisor => (
+          <div key={advisor._id} className="teams">
+            <img src="img/sidna.jpg" alt="" />
+            <div className="name">{advisor.Prenom} {advisor.Nom}</div>
+            <div className="desig">{advisor.department}</div>
+            <div className="about">{advisor.email}</div>
+            <div className="social-links">
+              <a href={`https://www.facebook.com/${advisor.Gmail}`}><i className="fa fa-facebook"></i></a>
+              <a href={`https://www.instagram.com/${advisor.Instagram}`}><i className="fa fa-instagram"></i></a>
+              <a href={`https://www.linkedin.com/in/${advisor.Linkedin}`}><i className="fa fa-linkedin"></i></a>
             </div>
-          ))}
-        </div>
-        </div>
-
-      </body>
-    </html>
+          </div>
+        ))}
+      </div>
+      <div className="slider-controls">
+        <button className="prev" onClick={handlePrev}>❮</button>
+        <button className="next" onClick={handleNext}>❯</button>
+      </div>
+    </div>
   );
 };
 

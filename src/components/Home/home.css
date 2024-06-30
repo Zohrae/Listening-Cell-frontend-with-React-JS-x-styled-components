@@ -1,138 +1,260 @@
-:root {
+#home {
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        position: relative; /* Ajouté */
 
-    --primary-color: #b2744c; 
+    }
 
-    --secondary-color: #4c8ab2; 
-    
-    /* Shades for secondary color */
-    --shade1: #598dbf;
-    --shade2: #669ecb;
-    --shade3: #73aff8;
-    --shade4: #80c0ff;
-    --shade5: #8dd0ff;
-    --shade6: #9ae0ff;
-    --shade7: #a7f0ff;
-    --shade8: #b4f9ff;
-    --shade9: #c1ffff;
-    --shade10: #e9f4f4;
+    #home-body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background: var(--pshade11);
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
 
-    /* Shades for primary color */
-    --pshade1: #b97f63;
-    --pshade12: #98705a;
+    }
 
-    --pshade2: #c28b71;
-    --pshade3: #cc967f;
-    --pshade4: #d6a08d;
-    --pshade5: #e1ab9b;
-    --pshade6: #ebb6a9;
-    --pshade7: #f5c1b7;
-    --pshade8: #ffccc6;
-    --pshade9: #ffd6d4;
-    --pshade10: #ffe1e2;
-    --pshade11: #f8f8f8;
-    --pshade14: rgb(246, 242, 242);
+    .home {
+        height: 100vh;
+        
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .full-width {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .text-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        font-size: 32px;
+    }
+
+    .background-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 
 
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        
+    }
+
+    .text-container {
+        position: absolute;
+        top: 50%;
+        left: 5%;
+        transform: translateY(-50%);
+        text-align: center;
+        color: black;
+        font-size: 32px;
+        font-family: 'cursive';
+        z-index: 2;
+    }
+
+    .welcome-text {
+        margin-bottom: 20px;
+    }
+
+    .static-quote {
+        font-style: italic;
+        font-size: 24px;
+    }
+
+    .more-button {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        background-color: #b2744c;
+        color: white;
+        border: none;
+        padding: 10px 70px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 18px;
+    }
+
+    .more-button:hover {
+        background-color: #ddcabd;
+    }
+
+    .paragraph {
+        margin-top: 20px;
+        margin-bottom: 40px;
+        font-size: 18px;
+    }
+
+    .welcome-text {
+        font-family: Gabriola;
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 1200px) {
+        #home-body {
+            width: 100vw;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .text-container {
+            font-size: 28px;
+        }
+        .static-quote {
+            font-size: 22px;
+        }
+        .more-button {
+            padding: 10px 50px;
+            font-size: 16px;
+        }
+        .paragraph {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        #home-body {
+            width: 100vw;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .text-container {
+            font-size: 24px;
+        }
+        .static-quote {
+            font-size: 20px;
+        }
+        .more-button {
+            padding: 10px 40px;
+            font-size: 14px;
+        }
+        .paragraph {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        #home-body {
+            width: 100vw;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .text-container {
+            top: 40%;
+            left: 5%;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
+        .static-quote {
+            font-size: 18px;
+        }
+        .more-button {
+            padding: 10px 30px;
+            font-size: 12px;
+        }
+        .paragraph {
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        #home-body {
+            width: 100vw;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .text-container {
+            top: 35%;
+            left: 5%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        .static-quote {
+            font-size: 16px;
+        }
+        .more-button {
+            padding: 10px 20px;
+            font-size: 10px;
+        }
+        .paragraph {
+            font-size: 10px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        #home-body {
+            width: 100vw;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .text-container {
+            top: 35%;
+            left: 5%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        .static-quote {
+            font-size: 16px;
+        }
+        .more-button {
+            padding: 10px 20px;
+            font-size: 10px;
+        }
+        .paragraph {
+            font-size: 10px;
+        }
+    }
+
+    @media (max-width: 300px) {
+        #home-body {
+            width: 100vw;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .text-container {
+            top: 35%;
+            left: 5%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        .static-quote {
+            font-size: 14px;
+        }
+        .more-button {
+            padding: 10px 15px;
+            font-size: 8px;
+        }
+        .paragraph {
+            font-size: 8px;
+        }
+    }
 }
-
-.home {
-    height: 100vh;
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* background-color: rgba(180, 144, 229, 0.5);  */
-}
-.full-width {
-    width: 100%;
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Ensure it behaves as a block-level element */
-}
-.text-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    font-size: 32px;
-}
-
-.background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* background-image: linear-gradient(to bottom, rgba(126, 126, 171, 0.5), rgba(180, 180, 232, 0.5)); Light purple gradient */
-    z-index: 1;
-}
-
-.text-container {
-    position: absolute;
-    top: 50%;
-    left: 5%; /* Adjust left position */
-    transform: translateY(-50%);
-    text-align: center;
-    color: black; /* Change text color to black */
-    font-size: 32px;
-    font-family: 'cursive'; /* Apply cursive font */
-    z-index: 2;
-}
-
-.welcome-text {
-    margin-bottom: 20px; /* Add some space between the Welcome text and the animated quote */
-}
-
-.static-quote {
-    font-style: italic; /* Apply italic style to the static quote */
-    font-size: 24px; /* Adjust font size */
-}
-
-.more-button {
-    position: relative; /* Add relative positioning */
-    top: 50%; /* Align the button vertically in the middle */
-    transform: translateY(-50%); /* Adjust vertical alignment */
-    left: 0; /* Align the button to the left */
-    background-color: #b2744c; /* Purple button background */
-    color: white; /* Button text color */
-    border: none; /* Remove button border */
-    padding: 10px 70px; /* Add more padding to make the button longer */
-    border-radius: 30px; /* Make the button more rounded */
-    cursor: pointer; /* Add pointer cursor on hover */
-    transition: background-color 0.3s ease; /* Smooth background color transition */
-    font-size: 18px; /* Increase font size */
-}
-
-.more-button:hover {
-    background-color: #ddcabd; 
-}
-
-.paragraph {
-    margin-top: 20px; /* Add some space between the paragraph and the button */
-    margin-bottom: 40px; /* Add some space between the paragraph and the button */
-
-    font-size: 18px; 
-}
-
-/* .welcome-text {
-    font-family: 'Pacifico', cursive; 
-} */
-
-.welcome-text {
-    font-family: Gabriola; /* Apply Pacifico font */
-}
-

@@ -1,177 +1,203 @@
+import React, { useState, useEffect } from 'react';
+import styled, { keyframes } from 'styled-components';
 
-// import React, { useState } from 'react';
-// import { Button,Modal,Input } from 'react-bootstrap';
+const defaultImage = "img/avatars/who.png";
 
-// function Test() {
+const TestimonialCarousel = () => {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [current, setCurrent] = useState(0);
 
-//     const [show, setShow] = useState(false);
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/feedbacks/`);
+        if (response.ok) {
+          const data = await response.json();
+          const filteredFeedbacks = data.filter(feedback => feedback.valide_par_admin);
+          const feedbacksWithImages = await Promise.all(filteredFeedbacks.map(async (feedback) => {
+            const studentResponse = await fetch(`http://127.0.0.1:8000/api/etudiants/${feedback.etudiant}/`);
+            if (studentResponse.ok) {
+              const studentData = await studentResponse.json();
+              return {
+                ...feedback,
+                etudiant: `${studentData.Nom} ${studentData.Prenom}`,
+                image: studentData.image || defaultImage
+              };
+            } else {
+              console.error('Failed to fetch student data:', studentResponse.statusText);
+              return {
+                ...feedback,
+                image: defaultImage
+              };
+            }
+          }));
+          setFeedbacks(feedbacksWithImages);
+        } else {
+          console.error('Failed to fetch feedbacks:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching feedbacks:', error);
+      }
+    };
 
-//     const handleClose = () => setShow(false);
-//     const handleShow = () => setShow(true);
-//   return (
+    fetchFeedbacks();
+  }, []);
 
-//        <div class="container ">
-//           <div className="crud shadow-lg p-3 mb-5 mt-5 bg-body rounded"> 
-//           <div class="row ">
-          
-//            <div class="col-sm-3 mt-5 mb-4 text-gred">
-//               <div className="search">
-//                 <form class="form-inline">
-//                  <input class="form-control mr-sm-2" type="search" placeholder="Search Student" aria-label="Search"/>
-               
-//                 </form>
-//               </div>    
-//               </div>  
-//               <div class="col-sm-3 offset-sm-2 mt-5 mb-4 text-gred" style={{color:"green"}}><h2><b>Student Details</b></h2></div>
-//               <div class="col-sm-3 offset-sm-1  mt-5 mb-4 text-gred">
-//               <Button variant="primary" onClick={handleShow}>
-//                 Add New Student
-//               </Button>
-//              </div>
-//            </div>  
-//             <div class="row">
-//                 <div class="table-responsive " >
-//                  <table class="table table-striped table-hover table-bordered">
-//                     <thead>
-//                         <tr>
-//                             <th>#</th>
-//                             <th>Name </th>
-//                             <th>Address</th>
-//                             <th>City </th>
-//                             <th>Country </th>
-//                             <th>Actions</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody>
-                       
-//                         <tr>
-//                             <td>1</td>
-//                             <td>Rual Octo</td>
-//                             <td>Deban Steet</td>
-//                             <td>Newyork</td>
-//                             <td>USA</td>
-//                             <td>
-//                                <a href="#" class="view" title="View" data-toggle="tooltip" style={{color:"#10ab80"}}><i class="material-icons">&#xE417;</i></a>
-//                                 <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-//                                 <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{color:"red"}}><i class="material-icons">&#xE872;</i></a>
-                                
-//                             </td>
-//                         </tr>
-//                         <tr>
-//                             <td>2</td>
-//                             <td>Demark</td>
-//                             <td>City Road.13</td>
-//                             <td>Dubai</td>
-//                             <td>UAE</td>
-//                             <td>
-//                             <a href="#" class="view" title="View" data-toggle="tooltip" style={{color:"#10ab80"}}><i class="material-icons">&#xE417;</i></a>
-//                                 <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-//                                 <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{color:"red"}}><i class="material-icons">&#xE872;</i></a>
-//                             </td>
-//                         </tr>
-                        
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent(prev => (prev + 1) % Math.max(feedbacks.length - 2, 1));
+    }, 4000);
 
-//                         <tr>
-//                             <td>3</td>
-//                             <td>Richa Deba</td>
-//                             <td>Ocol Str. 57</td>
-//                             <td>Berlin</td>
-//                             <td>Germany</td>
-//                             <td>
-//                             <a href="#" class="view" title="View" data-toggle="tooltip" style={{color:"#10ab80"}}><i class="material-icons">&#xE417;</i></a>
-//                                 <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-//                                 <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{color:"red"}}><i class="material-icons">&#xE872;</i></a>
-//                             </td>
-//                         </tr>
+    return () => clearInterval(interval);
+  }, [feedbacks]);
 
-//                         <tr>
-//                             <td>4</td>
-//                             <td>James Cott</td>
-//                             <td>Berut Road</td>
-//                             <td>Paris</td>
-//                             <td>France</td>
-//                             <td>
-//                             <a href="#" class="view" title="View" data-toggle="tooltip" style={{color:"#10ab80"}}><i class="material-icons">&#xE417;</i></a>
-//                                 <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-//                                 <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{color:"red"}}><i class="material-icons">&#xE872;</i></a>
-//                             </td>
-//                         </tr>
+  const handleDotClick = (index) => {
+    setCurrent(index);
+  };
 
+  return (
+    <Container>
+      <TitleTest>Découvrez les témoignages de nos étudiants sur nos événements et services</TitleTest> 
+      <TestimonialWrapper>
+        {feedbacks.slice(current, current + 3).map((feedback, index) => (
+          <TestimonialCard key={index} isMiddle={index === 1}>
+            <TestimonialContent>
+              <TestimonialImage src={feedback.image} alt={feedback.etudiant} />
+              <TestimonialText>{feedback.contenu}</TestimonialText>
+              <TestimonialAuthor>- {feedback.etudiant}</TestimonialAuthor>
+            </TestimonialContent>
+          </TestimonialCard>
+        ))}
+      </TestimonialWrapper>
+      <Dots>
+        {feedbacks.slice(0, feedbacks.length - 2).map((_, index) => (
+          <Dot key={index} active={current === index} onClick={() => handleDotClick(index)} />
+        ))}
+      </Dots>
+    </Container>
+  );
+}
 
-//                         <tr>
-//                             <td>5</td>
-//                             <td>Dheraj</td>
-//                             <td>Bulf Str. 57</td>
-//                             <td>Delhi</td>
-//                             <td>India</td>
-//                             <td>
-//                             <a href="#" class="view" title="View" data-toggle="tooltip" style={{color:"#10ab80"}}><i class="material-icons">&#xE417;</i></a>
-//                                 <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-//                                 <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{color:"red"}}><i class="material-icons">&#xE872;</i></a>
-//                             </td>
-//                         </tr>
+export default TestimonialCarousel;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw; 
+  margin-left: calc(-50vw + 50%);
+  position: relative; /* Add this line */
+  padding-top: 7%;
+  padding-BOTTOM: 4%;
+
+    @media (max-width: 768px) {
+    padding-top: 10%;
+    padding-bottom: 6%;
+  }
+`;
 
 
-//                         <tr>
-//                             <td>6</td>
-//                             <td>Maria James</td>
-//                             <td>Obere Str. 57</td>
-//                             <td>Tokyo</td>
-//                             <td>Japan</td>
-//                             <td>
-//                             <a href="#" class="view" title="View" data-toggle="tooltip" style={{color:"#10ab80"}}><i class="material-icons">&#xE417;</i></a>
-//                                 <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-//                                 <a href="#" class="delete" title="Delete" data-toggle="tooltip" style={{color:"red"}}><i class="material-icons">&#xE872;</i></a>
-//                             </td>
-//                         </tr>
-//                     </tbody>
-//                 </table>
-//             </div>   
-//         </div>  
 
-//         {/* <!--- Model Box ---> */}
-//         <div className="model_box">
-//       <Modal
-//         show={show}
-//         onHide={handleClose}
-//         backdrop="static"
-//         keyboard={false}
-//       >
-//         <Modal.Header closeButton>
-//           <Modal.Title>Add Record</Modal.Title>
-//         </Modal.Header>
-//             <Modal.Body>
-//             <form>
-//                 <div class="form-group">
-//                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Name"/>
-//                 </div>
-//                 <div class="form-group mt-3">
-//                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Country"/>
-//                 </div>
-//                 <div class="form-group mt-3">
-//                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter City"/>
-//                 </div>
-//                 <div class="form-group mt-3">
-//                     <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter Country"/>
-//                 </div>
-               
-//                   <button type="submit" class="btn btn-success mt-4">Add Record</button>
-//                 </form>
-//             </Modal.Body>
+const revealAnimation = keyframes`
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+`;
 
-//         <Modal.Footer>
-//           <Button variant="secondary" onClick={handleClose}>
-//             Close
-//           </Button>
-         
-//         </Modal.Footer>
-//       </Modal>
- 
-//        {/* Model Box Finsihs */}
-//        </div>  
-//       </div>    
-//       </div>  
-//   );
-// }
+const TestimonialWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
 
-// export default Test;
+    @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+  }
+`;
+
+const TestimonialCard = styled.div`
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 30%;
+  padding: 20px;
+  margin: 10px;
+  transition: all 0.3s ease;
+  animation: ${revealAnimation} 1s ease;
+  opacity: ${props => props.isMiddle ? '1' : '0.5'};
+  transform: ${props => props.isMiddle ? 'scale(1.05)' : 'scale(1)'};
+  &:hover {
+    transform: ${props => props.isMiddle ? 'translateY(-5px) scale(1.05)' : 'none'};
+    box-shadow: ${props => props.isMiddle ? '0px 6px 20px rgba(0, 0, 0, 0.2)' : '0px 4px 15px rgba(0, 0, 0, 0.1)'};
+  }
+
+    @media (max-width: 768px) {
+    width: 80%;
+    margin: 15px 0;
+    opacity: 1;
+    transform: scale(1);
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+    }
+  }
+`;
+
+const TestimonialContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const TestimonialImage = styled.img`
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--secondary-color);
+  border-radius: 50%;
+  margin-bottom: 10px;
+`;
+
+const TestimonialText = styled.p`
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+const TestimonialAuthor = styled.p`
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--primary-color);
+`;
+
+const Dots = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const Dot = styled.span`
+  height: 10px;
+  width: 10px;
+  margin: 0 5px;
+  background-color: ${props => props.active ? '#000' : '#bbb'};
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+`;
+
+
+const TitleTest = styled.h2`
+  font-size: 32px;
+  margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+    font-size: 24px;
+    text-align: center;
+    padding: 0 20px;
+  }
+`;
+

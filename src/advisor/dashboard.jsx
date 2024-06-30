@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { Link } from 'react-router-dom';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, LineElement, BarElement, PointElement, LinearScale, Title as ChartTitle, CategoryScale, ArcElement } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
 
+ChartJS.register(LineElement, PointElement, BarElement, LinearScale, ChartTitle, CategoryScale, ArcElement);
 
-// Global style for resetting and applying CSS variables
 const GlobalStyles = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
   }
 
   a {
@@ -33,9 +38,36 @@ const GlobalStyles = createGlobalStyle`
     --light-yellow: #FFF2C6;
     --orange: #FD7238;
     --light-orange: #FFE0D3;
+    --primary-color: #b2744c; 
+
+    --secondary-color: #4c8ab2; 
+    
+    /* Shades for secondary color */
+    --shade1: #598dbf;
+    --shade2: #669ecb;
+    --shade3: #73aff8;
+    --shade4: #80c0ff;
+    --shade5: #8dd0ff;
+    --shade6: #9ae0ff;
+    --shade7: #a7f0ff;
+    --shade8: #b4f9ff;
+    --shade9: #c1ffff;
+    --shade10: #e9f4f4;
+
+    /* Shades for primary color */
+    --pshade1: #b97f63;
+    --pshade2: #c28b71;
+    --pshade3: #cc967f;
+    --pshade4: #d6a08d;
+    --pshade5: #e1ab9b;
+    --pshade6: #ebb6a9;
+    --pshade7: #f5c1b7;
+    --pshade8: #ffccc6;
+    --pshade9: #ffd6d4;
+    --pshade10: #ffe1e2;
   }
 
-  html {
+   html {
     overflow-x: hidden;
   }
 
@@ -49,14 +81,29 @@ const GlobalStyles = createGlobalStyle`
     background: var(--grey);
     overflow-x: hidden;
   }
+
 `;
 
-// Styled component for the sidebar
+const ContentContainer = styled.div`
+  width: ${(props) => (props.open ? 'calc(100vw - 240px)' : 'calc(100vw - 60px)')}; /* Adjust width based on sidebarOpen state */
+  margin-left: ${(props) => (props.open ? '240px' : '60px')}; /* Adjust margin to move content away from the sidebar */
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+  align-items: center; /* Center the content vertically */
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0;
+  }
+`;
+
+
 const Sidebar = styled.section`
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
+  width: ${(props) => (props.open ? '240px' : '80px')}; /* Adjust width based on sidebarOpen state */
   height: 100%;
   background: var(--light);
   z-index: 2000;
@@ -64,9 +111,16 @@ const Sidebar = styled.section`
   transition: .3s ease;
   overflow-x: hidden;
   scrollbar-width: none;
+
+  @media screen and (max-width: 768px) {
+    width: ${(props) => (props.open ? '240px' : '80px')}; /* Hide sidebar on small screens */
+  }
 `;
 
-// Styled component for the brand link
+const SidebarTitle = styled.span`
+  display: ${(props) => (props.show ? 'block' : 'none')};
+`;
+
 const Brand = styled.a`
   font-size: 24px;
   font-weight: 700;
@@ -81,15 +135,14 @@ const Brand = styled.a`
   z-index: 500;
   padding-bottom: 20px;
   box-sizing: content-box;
+  
 `;
 
-// Styled component for the side menu
 const SideMenu = styled.ul`
   width: 100%;
   margin-top: 48px;
 `;
 
-// Styled component for the side menu item
 const SideMenuItem = styled.li`
   height: 48px;
   background: transparent;
@@ -98,13 +151,11 @@ const SideMenuItem = styled.li`
   padding: 4px;
 `;
 
-// Styled component for the active side menu item
 const SideMenuItemActive = styled(SideMenuItem)`
   background: var(--grey);
   position: relative;
 `;
 
-// Styled component for the side menu link
 const SideMenuItemLink = styled.a`
   width: 100%;
   height: 100%;
@@ -118,12 +169,12 @@ const SideMenuItemLink = styled.a`
   overflow-x: hidden;
 `;
 
-// Styled component for the sidebar icon
 const SideMenuItemIcon = styled.i`
   min-width: calc(60px  - ((4px + 6px) * 2));
   display: flex;
   justify-content: center;
   margin-top: 0px;
+  margin-left: -13px;
 `;
 
 const TopNavbar = styled.nav`
@@ -133,36 +184,30 @@ const TopNavbar = styled.nav`
   background-color: var(--light);
   
   padding: 10px 20px;
-  width: calc(100% - 280px); /* Make the navbar full width minus the width of the sidebar */
+  width: ${(props) => (props.open ? 'calc(100% - 240px)' : 'calc(100% - 60px)')}; /* Adjust width based on sidebarOpen state */
   position: fixed; /* Position the navbar at the top */
   top: 0; /* Align the navbar to the top */
   z-index: 2000; /* Ensure the navbar is above the sidebar */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
-  left: 280px; /* Align the navbar to the right edge of the sidebar */
+  left: ${(props) => (props.open ? '240px' : '60px')}; /* Align the navbar to the right edge of the sidebar */
   flex-wrap: nowrap; /* Ensure items don't wrap to the next line */
   height: 60px;
+
+  @media screen and (max-width: 768px) {
+    width: ${(props) => (props.open ? '100%' : 'calc(100% - 60px)')};
+  }
 `;
 
 
-const ContentContainer = styled.div`
-  width: calc(100vw - 280px); /* Set the width to span the full width of the screen minus the sidebar width */
-  margin-left: 280px; /* Adjust margin to move content away from the sidebar */
-  display: flex;
-  justify-content: center; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 0px;
-`;
 
-// Styled component for the search bar
 const SearchBarContainer = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center; /* Center items horizontally */
-  margin-top: 10px;
+  
 `;
 
-// Styled component for the search bar
 const SearchBar = styled.input`
   width: 300px;
   height: 40px;
@@ -171,12 +216,18 @@ const SearchBar = styled.input`
   padding: 0 20px;
   font-size: 16px;
   transition: border-color 0.3s ease; /* Add transition for smooth hover effect */
-  
+  outline: none;
   &:hover {
     border-color: transparent; /* Remove border on hover */
   }
+
+  @media screen and (max-width: 768px) {
+    width: 200px;
+  }
+
 `;
-// Styled component for the notification icon
+
+
 const NotificationIcon = styled.i`
   font-size: 24px;
   color: var(--dark-grey);
@@ -184,14 +235,17 @@ const NotificationIcon = styled.i`
   margin-left: 10px; /* Add margin to create space between elements */
 `;
 
-// Styled component for the profile icon
 const ProfileIcon = styled.i`
   font-size: 24px;
-  color: var(--dark-grey);
+  color: #4c8ab2;
   cursor: pointer;
   margin-left: 10px; /* Add margin to create space between elements */
 `;
 
+
+const MenuIconContainer = styled.div`
+  width: 60px; 
+`;
 
 const Dropdown = styled.ul`
   position: absolute;
@@ -204,106 +258,139 @@ const Dropdown = styled.ul`
   list-style-type: none;
 `;
 
-// Styled component for the dropdown item
 const DropdownItem = styled.li`
   margin-bottom: 5px;
 `;
 
-const DataTable = styled.table`
+
+const StyledLink = styled(Link)`
   width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ddd; /* Add border to the table */
-`;
-
-// Styled component for the table header
-const TableHeader = styled.th`
-  padding: 12px;
-  background-color: #f2f2f2;
-  border: 1px solid #ddd;
-  text-align: left;
-`;
-
-// Styled component pour les cellules de données
-const TableData = styled.td`
-  padding: 12px;
-  border: 1px solid #ddd;
-`;
-
-const Title = styled.h2`
-  margin-top: 20px;
-  margin-bottom: 10px;
-`;
-
-const DataTableContainer = styled.div`
-  overflow-x: auto; /* Add horizontal scrolling if needed */
-  width: calc(100% - 60px); 
-  
-  margin-top: -60px;
-`;
-
-const LargeTableData = styled(TableData)`
-  padding: 16px; /* Increase padding for larger spacing */
-`;
-
-const DemandesButton = styled.button`
-  background-color: var(--blue);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
+  height: 100%;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  border-radius: 48px;
   font-size: 16px;
-  width: 150px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: absolute;
-  top: 100px;
-  left: 350px; /* Adjust the left position as needed */
+  color: var(--dark);
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-decoration: none; /* Add this to remove default underline from link */
 
   &:hover {
-    background-color: var(--dark-blue);
-    color: black;
-
+    color: var(--primary-color); /* Change text color to primary color on hover */
   }
+`;
+
+const MenuIcon = styled.i`
+  font-size: 24px;
+  color: var(--dark-grey);
+  cursor: pointer;
+  margin-right: 10px; 
+`;
+const HorizontalContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px; /* Adjust height as needed */
+  
+`;
+
+
+const VerticalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px; /* Add margin to create space between rectangles */
+
+`;
+
+const Rectangle = styled.div`
+  width: 500px; 
+  height: 250px; 
+  background-color: ${props => props.color};
+`;
+
+const DoughnutContainer = styled.div`
+  width: 430px; 
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 10px;
+  // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  // transition: transform 0.3s, opacity 0.3s;
+  &:hover {
+    // transform: translateY(-5px);
+    opacity: 0.9;
+  }
+  height: 425px; 
+  margin-top: -12%;
+  margin-left: 40px;
+`;
+
+const LegendContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+`;
+
+const LegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+`;
+
+const BarLegendPoint = styled.span`
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 5px;
+`;
+
+const BarLegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  margin-right: 10px;
+
+`;
+
+// Container pour la légende de la barre
+const BarLegendContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 `;
 
 function AdminHub() {
   const [notifications, setNotifications] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [demandes, setDemandes] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true); 
 
-
-  useEffect(() => {
-    const fetchDemandes = async () => {
-      try {
-        const id = sessionStorage.getItem('conseiller_id');
-        if (id) {
-          const response = await fetch(`http://localhost:8000/api/demandes/?conseiller=${id}`);
-          if (response.ok) {
-            const data = await response.json();
-            setDemandes(data);
-          } else {
-            console.error('Failed to fetch demandes:', response.statusText);
-          }
-        } else {
-          console.error('Conseiller ID not found in sessionStorage.');
-        }
-      } catch (error) {
-        console.error('Error fetching demandes:', error);
-      }
-    };
-
-    fetchDemandes();
-  }, []);
+  const [feedbackData, setFeedbackData] = useState([]);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const id = sessionStorage.getItem('conseiller_id');
-        const response = await fetch(`http://localhost:8000/api/notifications/?conseiller=${id}`);
+        const id = localStorage.getItem('conseiller_id');
+        if (!id) {
+          navigate('/login');
+          return; 
+        }
+        const response = await fetch(`http://localhost:8000/api/notifications/?conseiller=${id}&vu=false`);
         if (response.ok) {
           const data = await response.json();
-          setNotifications(data);
+          const unreadNotifications = data.filter(notification => !notification.vu);
+          setNotifications(unreadNotifications);
+          if (unreadNotifications.length > 0) {
+            document.getElementById('notificationIcon').style.color = 'red';
+          }
         } else {
           console.error('Failed to fetch notifications:', response.statusText);
         }
@@ -311,119 +398,277 @@ function AdminHub() {
         console.error('Error fetching notifications:', error);
       }
     };
-
+  
     fetchNotifications();
   }, []);
-
-  const handleNotificationClick = () => {
+  
+  const handleNotificationClick = async () => {
     setShowDropdown(!showDropdown);
-  };
-
-  const handleAcceptDemande = async (demandeId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/demandes/${demandeId}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          etat: 'Acceptée',
-        }),
-      });
+      const id = localStorage.getItem('conseiller_id');
+      const response = await fetch(`http://localhost:8000/api/notifications/?conseiller=${id}`);
       if (response.ok) {
-        fetchDemandes();
-        const notificationResponse = await fetch(`http://localhost:8000/api/demandes/${demandeId}/`);
-        if (notificationResponse.ok) {
-          const demande = await notificationResponse.json();
-          const message = `La demande "${demande.title}" a été acceptée.`;
-          // Create a notification for the counselor
-          const notificationConseiller = {
-            conseiller: demande.conseiller,
-            message: message,
-          };
-          await fetch('http://localhost:8000/api/notifications/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(notificationConseiller),
-          });
-          // Create a notification for the student
-          const notificationEtudiant = {
-            etudiant: demande.etudiant,
-            message: `Votre demande "${demande.title}" a été acceptée.`,
-          };
-          await fetch('http://localhost:8000/api/notificationsEtudiant/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(notificationEtudiant),
-          });
-        } else {
-          console.error('Failed to fetch demande:', notificationResponse.statusText);
+        const data = await response.json();
+        // Mettre à jour l'état "vu" de chaque notification
+        data.forEach(async notification => {
+          if (!notification.vu) {
+            const updateResponse = await fetch(`http://localhost:8000/api/notifications/${notification.id}/`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ vu: true }), // Mettre à jour "vu" à true
+            });
+            if (updateResponse.ok) {
+              // Mise à jour réussie, effectuer les actions nécessaires (par exemple, afficher un message)
+            } else {
+              console.error('Failed to update notification:', updateResponse.statusText);
+            }
+          }
+        });
+        const hasUnreadNotifications = data.some(notification => !notification.vu);
+        if (!hasUnreadNotifications) {
+          document.getElementById('notificationIcon').style.color = 'var(--dark-grey)';
         }
       } else {
-        console.error('Failed to update demande:', response.statusText);
+        console.error('Failed to fetch notifications:', response.statusText);
       }
     } catch (error) {
-      console.error('Error updating demande:', error);
+      console.error('Error fetching notifications:', error);
     }
   };
   
-  // Function to refuse a request
-  const handleRefuseDemande = async (demandeId) => {
+  const handleLogout = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/demandes/${demandeId}/`, {
+      const id = localStorage.getItem('conseiller_id');
+      const response = await fetch(`http://localhost:8000/api/conseillers/${id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          etat: 'Refusée',
-        }),
+        body: JSON.stringify({ est_connecte: false }), // Mettre à jour "est_connecte" à false
       });
+
       if (response.ok) {
-        // Refresh the list of requests after updating the state
-        fetchDemandes();
-        const notificationResponse = await fetch(`http://localhost:8000/api/demandes/${demandeId}/`);
-        if (notificationResponse.ok) {
-          const demande = await notificationResponse.json();
-          const message = `La demande "${demande.title}" a été refusée.`;
-          // Create a notification for the counselor
-          const notificationConseiller = {
-            conseiller: demande.conseiller,
-            message: message,
-          };
-          await fetch('http://localhost:8000/api/notifications/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(notificationConseiller),
-          });
-          // Create a notification for the student
-          const notificationEtudiant = {
-            etudiant: demande.etudiant,
-            message: `Votre demande "${demande.title}" a été refusée.`,
-          };
-          await fetch('http://localhost:8000/api/notificationsEtudiant/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(notificationEtudiant),
-          });
-        } else {
-          console.error('Failed to fetch demande:', notificationResponse.statusText);
-        }
+        console.log('Logout successful');
+        localStorage.clear();
+        window.location.href = '/login';
       } else {
-        console.error('Failed to update demande:', response.statusText);
+        const errorDetail = await response.json();
+        console.error('Failed to logout:', response.statusText, errorDetail);
       }
     } catch (error) {
-      console.error('Error updating demande:', error);
+      console.error('Error logging out:', error);
     }
   };
+  
+  
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setSidebarOpen(false);
+      }
+    };
+  
+    window.addEventListener('resize', handleResize);
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  
+  
+
+  const toggleSidebar = () => {
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false); // Always close sidebar on small screens
+    } else {
+      setSidebarOpen(!sidebarOpen); // Toggle sidebar state on larger screens
+    }
+  };
+  
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/feedbacks/analyzeAll/');
+        if (response.ok) {
+          const data = await response.json();
+          setFeedbackData(data);
+        } else {
+          console.error('Failed to fetch feedback data:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching feedback data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const sentimentScores = feedbackData.map((feedback, index) => ({
+    x: index + 1,
+    y: feedback.sentiment
+  }));
+
+  const data = {
+    datasets: [
+      {
+        label: 'Sentiment Analysis',
+        data: sentimentScores,
+        fill: false,
+        borderColor: '#669ecb',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      x: {
+        type: 'linear',
+        title: {
+          display: true,
+          text: 'Feedback Index'
+        }
+      },
+      y: {
+        type: 'linear',
+        min: -2,
+        max: 2,
+        title: {
+          display: true,
+          text: 'Score de Sentiments'
+        }
+      }
+    }
+  };
+
+
+  const [barData, setBarData] = useState({
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    datasets: [
+      {
+        label: 'Dossiers',
+        data: [],
+        backgroundColor: '#6dabe4',
+      },
+      {
+        label: 'Étudiants',
+        data: [],
+        backgroundColor: 'rgb(213, 163, 136)',
+      },
+    ],
+  });
+
+  const barOptions = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Nombre Etudiant x Dossiers', 
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false, 
+      },
+    },
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseDossiers = await fetch('http://localhost:8000/api/dossiers/count_by_month/');
+        const responseStudents = await fetch('http://localhost:8000/api/etudiants/count_by_month_2024/');
+        if (responseDossiers.ok && responseStudents.ok) {
+          const dataDossiers = await responseDossiers.json();
+          const dataStudents = await responseStudents.json();
+          const countsDossiers = Object.values(dataDossiers);
+          const countsStudents = Object.values(dataStudents);
+          setBarData({
+            ...barData,
+            labels: Object.keys(dataDossiers),
+            datasets: [
+              { ...barData.datasets[0], data: countsDossiers },
+              { ...barData.datasets[1], data: countsStudents },
+            ],
+          });
+        } else {
+          console.error('Failed to fetch data:', responseDossiers.statusText, responseStudents.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const [doughnutData, setDoughnutData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Students by Major',
+        data: [],
+        backgroundColor: [],
+        hoverOffset: 4,
+      },
+    ],
+  });
+
+  useEffect(() => {
+    const fetchDoughnutData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/etudiants/count_by_major/');
+        if (response.ok) {
+          const data = await response.json();
+          const labels = data.map(item => item.major);
+          const counts = data.map(item => item.total);
+          const backgroundColors = generateRandomColors(data.length);
+
+          setDoughnutData({
+            ...doughnutData,
+            labels: labels,
+            datasets: [
+              {
+                ...doughnutData.datasets[0],
+                data: counts,
+                backgroundColor: backgroundColors,
+              },
+            ],
+          });
+        } else {
+          console.error('Failed to fetch doughnut data:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching doughnut data:', error);
+      }
+    };
+
+    fetchDoughnutData();
+  }, []);
+
+  const generateRandomColors = (numColors) => {
+    const primaryColor = '#b2744c';
+    const secondaryColor = '#4c8ab2';
+    const colors = [];
+
+    colors.push(primaryColor);
+    colors.push(secondaryColor);
+
+    for (let i = 2; i < numColors; i++) {
+      colors.push(`rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.6)`);
+    }
+
+    return colors;
+  };
+
+  const handleNavigation = (url) => {
+    navigate(url);
+  }; 
   
   return (
     <html lang="en">
@@ -431,142 +676,151 @@ function AdminHub() {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        {/* Boxicons */}
         <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" />
-        {/* Global styles */}
         <GlobalStyles />
 
-        <title>AdminHub</title>
+        <title>Dashboard</title>
       </head>
       <body>
-      <TopNavbar>
+      <TopNavbar open={sidebarOpen}> 
+      <MenuIconContainer>
+            <MenuIcon className={sidebarOpen ? 'bx bx-menu' : 'bx bx-menu-alt-right'} onClick={toggleSidebar} />
+          </MenuIconContainer>
         <SearchBarContainer>
-            <SearchBar type="text" placeholder="Search..." />
-        </SearchBarContainer>          
-        <NotificationIcon className="bx bx-bell" onClick={handleNotificationClick} />
+            <SearchBar type="text" placeholder="Rechercher..." />
+        </SearchBarContainer>    
+        <NotificationIcon onClick={() => handleNavigation('/dashboard/chat')} className="bx bx-chat" style={{ color: 'var(--secondary-color)' }} />
+        <NotificationIcon id="notificationIcon" className="bx bx-bell" onClick={handleNotificationClick} />
           <ProfileIcon className="bx bx-user-circle" />
           {showDropdown && (
-            <Dropdown>
-              {notifications.length > 0 ? (
-                notifications.map(notification => (
-                  <DropdownItem key={notification.id}>{notification.message}</DropdownItem>
-                ))
-              ) : (
-                <DropdownItem>No notifications</DropdownItem>
-              )}
-            </Dropdown>
-          )}
+              <Dropdown>
+                {notifications.length > 0 ? (
+                  notifications.map(notification => (
+                    <DropdownItem key={notification.id}>{notification.message}</DropdownItem>
+                  ))
+                ) : (
+                  <DropdownItem>No notifications</DropdownItem>
+                )}
+              </Dropdown>
+            )}
         </TopNavbar>
-        {/* SIDEBAR */}
-        <ContentContainer>
 
-        <Sidebar id="sidebar">
-          <Brand href="#">
-          <img src="img/bee.png" alt="" width={'30px'} style={{ marginLeft: '100px' }} />
-          </Brand>
+        <ContentContainer open={sidebarOpen}>
+
+        <Sidebar id="sidebar" open={sidebarOpen}> 
+                <Brand href="#">
+          <img
+            src={sidebarOpen ? "/img/loo.png" : "/img/bee.png"} 
+            alt=""
+            width={sidebarOpen ? '145px' : '30px'} // Modifier la largeur de l'image en fonction de l'état de la barre latérale
+            style={{ marginTop: '25px', marginLeft: sidebarOpen ? '30px' : '30px' }} // Ajouter une marge à gauche en fonction de l'état de la barre latérale
+          />
+        </Brand>
           <SideMenu>
-            <SideMenuItem className="active">
-              <SideMenuItemLink href="#">
-                <SideMenuItemIcon className='bx bxs-dashboard'></SideMenuItemIcon>
-                <span className="text">Dashboard</span>
-              </SideMenuItemLink>
-            </SideMenuItem>
+            <SideMenuItemActive>
+            <StyledLink to="/dashboard">
+                <SideMenuItemIcon className='bx bxs-dashboard' style={{ color: 'var(--secondary-color)' }}></SideMenuItemIcon>
+                <SidebarTitle show={sidebarOpen} style={{ color: 'var(--secondary-color)' }}>Dashboard</SidebarTitle>
+              </StyledLink>
+            </SideMenuItemActive>
             <SideMenuItem>
-              <SideMenuItemLink href="#">
-                <SideMenuItemIcon className='bx bxs-shopping-bag-alt'></SideMenuItemIcon>
-                <span className="text">My Store</span>
-              </SideMenuItemLink>
-            </SideMenuItem>
-            <SideMenuItem>
-              <SideMenuItemLink href="#">
-                <SideMenuItemIcon className='bx bxs-doughnut-chart'></SideMenuItemIcon>
-                <span className="text">Analytics</span>
-              </SideMenuItemLink>
-            </SideMenuItem>
-            <SideMenuItem>
-              <SideMenuItemLink href="#">
-                <SideMenuItemIcon className='bx bxs-message-dots'></SideMenuItemIcon>
-                <span className="text">Message</span>
-              </SideMenuItemLink>
-            </SideMenuItem>
-            <SideMenuItem>
-              <SideMenuItemLink href="#">
+            <StyledLink to="/dashboard/students">
                 <SideMenuItemIcon className='bx bxs-group'></SideMenuItemIcon>
-                <span className="text">Team</span>
-              </SideMenuItemLink>
+                <SidebarTitle show={sidebarOpen}>Étudiants</SidebarTitle>
+              </StyledLink>
+            </SideMenuItem>
+            <SideMenuItem>
+            <StyledLink to="/dashboard/demandes">
+                <SideMenuItemIcon className='bx bxs-shopping-bag-alt'></SideMenuItemIcon>
+                <SidebarTitle show={sidebarOpen}>Demandes</SidebarTitle>
+              </StyledLink>
+            </SideMenuItem>
+            <SideMenuItem>
+              <StyledLink to="/dashboard/rendezvous">
+              <SideMenuItemIcon className='bx bxs-time'></SideMenuItemIcon>
+                <SidebarTitle show={sidebarOpen}>Rendez-Vous</SidebarTitle>
+              </StyledLink>
+            </SideMenuItem>
+            <SideMenuItem>
+              <StyledLink to="/dashboard/records">
+                <SideMenuItemIcon className='bx bxs-folder'></SideMenuItemIcon>
+                <SidebarTitle show={sidebarOpen}>Dossiers</SidebarTitle>
+              </StyledLink>
+            </SideMenuItem>
+            <SideMenuItem>
+            <StyledLink to="/dashboard/calendar">
+                <SideMenuItemIcon className='bx bxs-calendar'></SideMenuItemIcon>
+                <SidebarTitle show={sidebarOpen}>Evénements</SidebarTitle>
+              </StyledLink>
+            </SideMenuItem>
+            <SideMenuItem>
+            <StyledLink to="/dashboard/feedbacks">
+                <SideMenuItemIcon className='bx bxs-chat'></SideMenuItemIcon>
+                <SidebarTitle show={sidebarOpen}>Feedback</SidebarTitle>
+              </StyledLink>
             </SideMenuItem>
           </SideMenu>
           <SideMenu>
             <SideMenuItem>
-              <SideMenuItemLink href="#">
-                <SideMenuItemIcon className='bx bxs-cog'></SideMenuItemIcon>
-                <span className="text">Settings</span>
-              </SideMenuItemLink>
-            </SideMenuItem>
-            <SideMenuItem>
-              <SideMenuItemLink href="#" className="logout">
-                <SideMenuItemIcon className='bx bxs-log-out-circle'></SideMenuItemIcon>
-                <span className="text">Logout</span>
+            <SideMenuItemLink href="#" className="logout" onClick={handleLogout}>
+              <SideMenuItemIcon className='bx bxs-log-out-circle' style={{ color: 'var(--red)' }}></SideMenuItemIcon> {/* Change color to red */}
+                <SidebarTitle show={sidebarOpen}>Déconnexion</SidebarTitle>
               </SideMenuItemLink>
             </SideMenuItem>
           </SideMenu>
-        </Sidebar>
-        <DataTableContainer>
-        <DemandesButton>Demandes</DemandesButton>
+          </Sidebar>
 
-            <Title>List of Requests</Title>
-        <DataTable>
-            <thead>
-              <tr>
-                <TableHeader>Title</TableHeader>
-                <TableHeader>Conseiller</TableHeader>
-                <TableHeader>Etudiant</TableHeader>
-                <TableHeader>Description</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-            {demandes.map(demande => (
-              <tr key={demande.id}>
-                    <LargeTableData>{demande.title}</LargeTableData>
-                    <LargeTableData>{demande.conseiller}</LargeTableData>
-                    <LargeTableData>{demande.etudiant}</LargeTableData>
-                    <LargeTableData>{demande.description}</LargeTableData>
-                <TableData>
-                  {/* Bouton pour accepter la demande */}
-                  <button onClick={() => handleAcceptDemande(demande.id)}>
-                    <i className="bx bxs-check-circle" style={{ color: 'green' }}></i>
-                  </button>
-                  {/* Bouton pour refuser la demande */}
-                  <button onClick={() => handleRefuseDemande(demande.id)}>
-                    <i className="bx bxs-x-circle" style={{ color: 'red' }}></i>
-                  </button>
-                </TableData>
-              </tr>
-            ))}
-            </tbody>
-          </DataTable>
-          </DataTableContainer>
+          <HorizontalContainer>
+          <VerticalContainer>
+            <Rectangle>
+            <Line data={data} options={options} />
+        
+            </Rectangle>
+            <Rectangle>
+            <Bar data={barData} options={barOptions} />
+              <BarLegendContainer>
+                {barData.datasets.map((dataset, index) => (
+                  <BarLegendItem key={index}>
+                    <BarLegendPoint style={{ backgroundColor: dataset.backgroundColor }} />
+                    <span>{dataset.label}</span>
+                  </BarLegendItem>
+                ))}
+              </BarLegendContainer>
+              </Rectangle>
+            </VerticalContainer>
 
+
+            <div>
+              <DoughnutContainer>
+                  <Doughnut data={doughnutData} />
+
+                  {/* Legend for Doughnut Chart */}
+                  <LegendContainer>
+                    {doughnutData.labels.map((label, index) => (
+                      <LegendItem key={label}>
+                        <span style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: doughnutData.datasets[0].backgroundColor[index],
+                          borderRadius: '50%',
+                          display: 'inline-block',
+                        }}></span>
+                        <span>{label}: {doughnutData.datasets[0].data[index]}</span>
+                      </LegendItem>
+                    ))}
+                  </LegendContainer>
+                </DoughnutContainer>
+
+               </div>
+               
+            </HorizontalContainer>
+            
         </ContentContainer>
 
-        {/* SIDEBAR */}
-      </body>
+
+          </body>
     </html>
   );
 }
-
 export default AdminHub;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
